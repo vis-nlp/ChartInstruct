@@ -13,7 +13,7 @@ We release the checkpoint for our pretrained model on huggingface.
 | ChartInstruct-Llama2  | [ChartInstruct-Llama2](https://huggingface.co/ahmed-masry/ChartInstruct-LLama2)  |
 | ChartInstruct-Flan-T5-XL  | Coming soon |
 
-**IMPORTANT:** Please note that we have changed the alignment module from a linear layer to an MLP with 2 layers to improve the compatability with huggignface's LLaVA codebase. This made our models very easy to run and finetune using a few lines of code as you will see below!
+**IMPORTANT:** Please note that we have changed the alignment module from a linear layer (as described in the paper) to an MLP with 2 layers to improve the compatability with huggignface's LLaVA codebase. This made our models very easy to run and finetune using a few lines of code as you will see below!
 
 ## Web Demo
 If you wish to quickly try our models, you can access our public web demoes hosted on the Hugging Face Spaces platform with a friendly interface!
