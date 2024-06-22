@@ -27,7 +27,9 @@ If you wish to quickly try our models, you can access our public web demoes host
 You can easily use our models for inference with the huggingface library! You just need to do the following:
 
 Chage the image_path to your chart example image path on your system
+
 Write the input_text
+
 We recommend using **beam search** with a beam size of 4 to better results, but if your machine's GPU has low memory, you can remove the num_beams from the generate method.
 
 
@@ -69,7 +71,7 @@ print(output_text)
 
 ```
 
-Does you GPU have low memory? The above code is slow on your machine? **We got you covered!** Use the following code that loads thq **quantized** version of the model. 
+Does you GPU have low memory? The above code is slow on your machine? **We got you covered!** Use the following code that loads the **quantized** version of the model. 
 Just make sure to install the following pip modules: bitsandbytes, itsandbytes-cuda112, accelerate
 
 ```
