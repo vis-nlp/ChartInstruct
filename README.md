@@ -23,8 +23,6 @@ If you wish to quickly try our models, you can access our public web demoes host
 | ChartInstruct-Llama2  | [ChartInstruct-Llama2](https://huggingface.co/spaces/ahmed-masry/ChartInstruct-LLama2) |
 | ChartInstruct-Flan-T5-XL  | Coming soon |
 
-Note: 
-
 ## Inference
 You can easily use our models for inference with the huggingface library! You just need to do the following:
 
