@@ -11,7 +11,7 @@ We release the checkpoint for our pretrained model on huggingface.
 | Task  | Checkpoint Path |
 | ------------- | ------------- |
 | ChartInstruct-Llama2  | [ChartInstruct-Llama2](https://huggingface.co/ahmed-masry/ChartInstruct-LLama2)  |
-| ChartInstruct-Flan-T5-XL  | Coming soon |
+| ChartInstruct-Flan-T5-XL  | [ChartInstruct-FlanT5-XL](https://huggingface.co/ahmed-masry/ChartInstruct-FlanT5-XL) |
 
 **IMPORTANT:** Please note that we have changed the alignment module from a linear layer (as described in the paper) to an MLP with 2 layers to improve the compatability with huggignface's LLaVA codebase. This made our models very easy to run and finetune using a few lines of code as you will see below!
 
@@ -21,7 +21,7 @@ If you wish to quickly try our models, you can access our public web demoes host
 | Tasks  | Web Demo |
 | ------------- | ------------- |
 | ChartInstruct-Llama2  | [ChartInstruct-Llama2](https://huggingface.co/spaces/ahmed-masry/ChartInstruct-LLama2) |
-| ChartInstruct-Flan-T5-XL  | Coming soon |
+| ChartInstruct-Flan-T5-XL  | [ChartInstruct-FlanT5-XL](https://huggingface.co/spaces/ahmed-masry/ChartInstruct-FlanT5-XL) |
 
 ## Inference
 You can easily use our models for inference with the huggingface library! You just need to do the following:
@@ -32,7 +32,7 @@ Write the input_text
 
 We recommend using **beam search** with a beam size of 4 to better results, but if your machine's GPU has low memory, you can remove the num_beams from the generate method.
 
-
+### ChartInstruct LLama2
 ```
 from PIL import Image
 import requests
@@ -110,7 +110,43 @@ output_text = processor.batch_decode(generate_ids[:, prompt_length:], skip_speci
 print(output_text)
 ```
 
+### ChartInstruct Flan-T5
+
+```
+from PIL import Image
+import requests
+from transformers import AutoProcessor, AutoModelForSeq2SeqLM
+import torch
+
+torch.hub.download_url_to_file('https://raw.githubusercontent.com/vis-nlp/ChartQA/main/ChartQA%20Dataset/val/png/multi_col_1229.png', 'chart_example_1.png')
+
+image_path = "/content/chart_example_1.png"
+input_text = "What is the share of respondants who prefer Whatsapp in the 18-29 age group?"
+
+input_prompt = f"<image>\n Question: {input_text} Answer: "
+
+model = AutoModelForSeq2SeqLM.from_pretrained("ahmed-masry/ChartInstruct-FlanT5-XL", torch_dtype=torch.float16, trust_remote_code=True)
+processor = AutoProcessor.from_pretrained("ahmed-masry/ChartInstruct-FlanT5-XL")
+
+device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+model.to(device)
+
+image = Image.open(image_path).convert('RGB')
+
+inputs = processor(text=input_prompt, images=image, return_tensors="pt")
+inputs = {k: v.to(device) for k, v in inputs.items()}
+
+# change type if pixel_values in inputs to fp16. 
+inputs['pixel_values'] = inputs['pixel_values'].to(torch.float16)
+
+# Generate
+generate_ids = model.generate(**inputs, num_beams=4, max_new_tokens=512)
+output_text = processor.batch_decode(generate_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
+print(output_text)
+```
+
 ## Finetuning 
+### ChartInstruct LLama2
 Checkout the example colab notebook in the repo that shows how to finetune the model on the ChartQA Dataset. 
 The training code is optimized such that you can train it on a **T4 GPU** which is **free on Colab**. 
 The notebook has three different setups LoRA & QLoRA & Full Finetuning. Based on your machine's GPU, you can switch between them. 
